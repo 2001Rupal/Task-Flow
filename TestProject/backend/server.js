@@ -18,10 +18,14 @@ const app = express();
 const server = http.createServer(app);
 const PORT = process.env.PORT || 3000;
 
+// ── Allowed origins ───────────────────────────
+const allowedOrigins = ['http://localhost:5173', 'http://localhost:3000'];
+if (process.env.FRONTEND_URL) allowedOrigins.push(process.env.FRONTEND_URL);
+
 // ── Socket.IO setup ───────────────────────────
 const io = new Server(server, {
   cors: {
-    origin: process.env.FRONTEND_URL ? [process.env.FRONTEND_URL, 'http://localhost:5173'] : '*',
+    origin: allowedOrigins,
     methods: ['GET', 'POST']
   }
 });
@@ -109,7 +113,11 @@ connectDB();
 
 // ── Middleware ────────────────────────────────
 app.use(cors({
-  origin: process.env.FRONTEND_URL ? [process.env.FRONTEND_URL, 'http://localhost:5173'] : '*',
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    callback(new Error(`CORS blocked: ${origin}`));
+  },
   credentials: true
 }));
 app.use(express.json());
