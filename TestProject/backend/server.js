@@ -113,7 +113,6 @@ app.use(cors({
   credentials: true
 }));
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
 
 // ── API Routes ────────────────────────────────
 app.use('/api/auth',            require('./routes/authRoutes'));
@@ -132,9 +131,9 @@ app.use('/api/comments',        require('./routes/commentRoutes'));
 app.use('/api/tags',            require('./routes/tagRoutes'));
 app.use('/api/profile',         require('./routes/profileRoutes'));
 
-// ── Serve frontend (legacy HTML) ──────────────
+// ── Health check ─────────────────────────────
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.json({ status: 'ok', app: 'TaskFlow Pro API' });
 });
 
 // ── Error handler ─────────────────────────────
