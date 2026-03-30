@@ -31,6 +31,7 @@ export default function ProjectsPage() {
   }
 
   return (
+    <>
     <div className="p-6 max-w-5xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
@@ -110,5 +111,6 @@ export default function ProjectsPage() {
       description="All tasks, comments, and attachments will be permanently removed. This cannot be undone."
       confirmLabel="Delete project"
     />
+    </>
   )
 }
