@@ -22,11 +22,20 @@ const PORT = process.env.PORT || 3000;
 const allowedOrigins = ['http://localhost:5173', 'http://localhost:3000'];
 if (process.env.FRONTEND_URL) allowedOrigins.push(process.env.FRONTEND_URL);
 
+// Allow all Vercel preview deployments (*.vercel.app)
+const allowedOriginPatterns = [/^https:\/\/.*\.vercel\.app$/];
+
 // ── Socket.IO setup ───────────────────────────
 const io = new Server(server, {
   cors: {
-    origin: allowedOrigins,
-    methods: ['GET', 'POST']
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+      if (allowedOriginPatterns.some(p => p.test(origin))) return callback(null, true);
+      callback(new Error(`CORS blocked: ${origin}`));
+    },
+    methods: ['GET', 'POST'],
+    credentials: true
   }
 });
 
@@ -116,6 +125,7 @@ app.use(cors({
   origin: (origin, callback) => {
     if (!origin) return callback(null, true);
     if (allowedOrigins.includes(origin)) return callback(null, true);
+    if (allowedOriginPatterns.some(p => p.test(origin))) return callback(null, true);
     callback(new Error(`CORS blocked: ${origin}`));
   },
   credentials: true
