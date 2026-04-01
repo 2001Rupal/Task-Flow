@@ -31,7 +31,8 @@ export const downloadAttachment = (id)       => `/api/attachments/${id}/download
 // Fetch attachment as authenticated blob URL (for inline preview)
 export const fetchAttachmentBlobUrl = async (id) => {
   const token = localStorage.getItem('token')
-  const res = await fetch(`/api/attachments/${id}/download`, {
+  const base = import.meta.env.VITE_API_URL || '/api'
+  const res = await fetch(`${base}/attachments/${id}/download`, {
     headers: { Authorization: `Bearer ${token}` }
   })
   if (!res.ok) throw new Error('Fetch failed')
